@@ -32,3 +32,26 @@ Her madde: karar + kısa gerekçe.
 - **ADR-10 — White-label tema mimarisi:** Marka, renk, logo ve harita merkezi
   kurulum ayarından (settings) beslenir; kodda sabitlenmez. Gerekçe: tek kod
   tabanının farklı belediyelere satılabilmesi ve hızlı markalaşma.
+- **ADR-11 — Sanctum: cihaz başına token, 180 gün, günlük prune:** Kimlik
+  doğrulama Laravel Sanctum ile; her giriş/kayıt ayrı bir token ve buna bağlı
+  `user_devices` kaydı üretir. Token geçerliliği 180 gün
+  (`SANCTUM_TOKEN_EXPIRATION_MINUTES=259200`), süresi dolanlar
+  `sanctum:prune-expired` ile günlük temizlenir. Gerekçe: mobil istemcide uzun
+  oturum, cihaz bazlı iptal ve push hedefleme; expired token birikimini önleme.
+- **ADR-12 — spatie/laravel-permission, İngilizce tanımlayıcı + Türkçe etiket:**
+  Roller (citizen, staff, manager, admin) `web` guard ile spatie üzerinden
+  yönetilir; enum backed değerleri İngilizce, `label()` Türkçe döner. Gerekçe:
+  kod/DB tarafında stabil, dile bağımsız tanımlayıcılar; kullanıcıya Türkçe
+  sunum.
+- **ADR-13 — Şifre sıfırlama 6 haneli e-posta kodu, kuyruksuz gönderim:**
+  Sıfırlama linki yerine 15 dk geçerli 6 haneli kod, `password_reset_tokens`
+  içinde hash'li saklanır; 60 sn tekrar sınırı vardır. Bildirim senkron (kuyruk
+  yok) gönderilir. Gerekçe: mobil istemci odaklı akış (derin link gerektirmez);
+  kullanıcı kodu hemen beklediğinden ve Faz 0'da queue worker garanti
+  edilmediğinden senkron gönderim tercih edildi. Kod, 5 yanlış denemede
+  geçersiz kılınır (kayıt silinir) ve kalan deneme hakkı yanıtta sızdırılmaz.
+- **ADR-14 — laravel-lang ile Türkçe yerelleştirme:** `APP_LOCALE=tr`,
+  `APP_FAKER_LOCALE=tr_TR`, fallback `en`. Doğrulama/kimlik mesajları
+  `laravel-lang/common` ile `lang/tr` altına yayınlanır. Gerekçe: son kullanıcı
+  ve demo içeriğin Türkçe olması; çevirilerin bakımını topluluk paketine
+  devretmek.
