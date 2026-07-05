@@ -1,0 +1,33 @@
+# Ortam dosyaları — asla commit edilmez
+.env
+.env.*
+!.env.example
+
+# Bağımlılıklar
+/vendor
+/node_modules
+**/vendor
+**/node_modules
+
+# Makineye özel Docker geçersiz kılmaları (yerel port vb.)
+docker-compose.override.yml
+
+# IDE ve editör
+/.idea
+/.vscode
+/.fleet
+/.nova
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sublime-project
+*.sublime-workspace
+
+# İşletim sistemi
+.DS_Store
+Thumbs.db
+
+# Loglar ve geçici
+*.log
+/tmp
