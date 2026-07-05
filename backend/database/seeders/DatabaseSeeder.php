@@ -11,9 +11,10 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\PermissionRegistrar;
 
 /**
- * Yalnızca yerel geliştirme içindir: rolleri ve her rolden birer örnek
- * kullanıcı üretir. Production kurulumunda RoleSeeder + kenttalep:admin
- * komutu kullanılır (bkz. README).
+ * Yalnızca yerel geliştirme içindir: roller, kategoriler, her rolden birer
+ * örnek kullanıcı, ek personel havuzu ve ~50 demo talep üretir. Production
+ * kurulumunda RoleSeeder + CategorySeeder + kenttalep:admin kullanılır
+ * (bkz. README).
  */
 class DatabaseSeeder extends Seeder
 {
@@ -21,7 +22,10 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $this->call(RoleSeeder::class);
+        $this->call([
+            RoleSeeder::class,
+            CategorySeeder::class,
+        ]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
@@ -33,5 +37,12 @@ class DatabaseSeeder extends Seeder
                 ])
                 ->assignRole($role->value);
         }
+
+        // Atama/saha akışı için ek personel havuzu.
+        User::factory(6)
+            ->create()
+            ->each(fn (User $staff) => $staff->assignRole(RoleEnum::Staff->value));
+
+        $this->call(TicketSeeder::class);
     }
 }

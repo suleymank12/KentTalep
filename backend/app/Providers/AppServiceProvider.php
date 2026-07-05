@@ -48,5 +48,9 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('reset-password', fn (Request $request): Limit => Limit::perMinute(5)
             ->by($request->ip() ?? ''));
+
+        // Talep oluşturma: kullanıcı başına 10 dakikada 5.
+        RateLimiter::for('ticket-create', fn (Request $request): Limit => Limit::perMinutes(10, 5)
+            ->by((string) ($request->user()?->getKey() ?? $request->ip())));
     }
 }

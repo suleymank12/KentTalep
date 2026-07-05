@@ -14,12 +14,12 @@ class UserPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $this->isAdmin($user);
+        return $this->isAdmin($user) || $user->hasRole(Role::Manager->value);
     }
 
     public function view(User $user, User $model): bool
     {
-        return $this->isAdmin($user);
+        return $this->isAdmin($user) || $user->hasRole(Role::Manager->value);
     }
 
     public function create(User $user): bool

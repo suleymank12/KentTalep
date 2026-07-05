@@ -55,3 +55,37 @@ Her madde: karar + kısa gerekçe.
   `laravel-lang/common` ile `lang/tr` altına yayınlanır. Gerekçe: son kullanıcı
   ve demo içeriğin Türkçe olması; çevirilerin bakımını topluluk paketine
   devretmek.
+- **ADR-15 — Atomik talep numarası (ON CONFLICT ... RETURNING):** Yıl bazlı
+  sıralı numara (`2026-000482`) `ticket_counters` üzerinde tek SQL ifadesiyle
+  (`INSERT ... ON CONFLICT (year) DO UPDATE SET last_value = last_value + 1
+  RETURNING`) üretilir. Gerekçe: oku-artır-yaz deseni eşzamanlı taleplerde lost
+  update / çakışan numara üretir; atomik ifade yarış penceresi bırakmaz.
+- **ADR-16 — State machine + foto-zorunlu resolve:** Durum geçişleri sabit bir
+  geçiş tablosu (TicketTransitionMap) ve TicketStateMachine ile rol/sahiplik
+  yetkileri altında yapılır; her geçiş loglanır. `in_progress → resolved` için
+  en az bir "sonrası" fotoğraf zorunludur. Gerekçe: geçersiz geçişleri ve yetki
+  ihlallerini tek noktada engellemek; kanıt fotoğrafı zorunluluğu ürünün saha
+  değerini ve denetlenebilirliğini artırır.
+- **ADR-17 — Medya: private disk + yetkili stream + el yapımı işlemci:**
+  Görseller private diskte tutulur ve yalnız yetkili stream uç noktasından
+  servis edilir (public URL yok). İşleme `intervention/image` ile elle yazılmış
+  senkron bir servistir; `spatie/laravel-medialibrary` yerine tercih edildi.
+  Gerekçe: şema üzerinde tam kontrol (before/after tipi, thumb, boyut),
+  denetlenebilirlik, queue'suz senkron dönüşüm ve KVKK gereği EXIF/GPS'in
+  yeniden encode ile kesin temizlenmesi. Ek güvenlik: gerçek MIME (finfo) ve
+  piksel-bombası (≤40M piksel) kontrolleri. Resolve anından itibaren medya
+  denetim kanıtıdır; yükleyen yalnız pending/assigned/in_progress durumlarında
+  silebilir, istisnai silme (KVKK talebi, hatalı yükleme) yalnız admin
+  yetkisindedir.
+- **ADR-18 — Konum için clickbar/laravel-magellan (PostGIS):** Konum,
+  Laravel'in native `geography(point, 4326)` kolonunda tutulur; Eloquent tarafı
+  Magellan `Point` cast'i ile yönetilir. Yakınlık filtresi parametreli
+  `ST_DWithin(..::geography, metre)` ile yazılır. Gerekçe: Magellan Laravel 13
+  ile sorunsuz kuruldu; Point okuma/yazma ve coğrafi sorgular için olgun destek
+  (fallback raw ifadeye gerek kalmadı).
+- **ADR-19 — priority = triage + iptal penceresi:** Talep oluştururken öncelik
+  istenmez; varsayılan `medium`'dur ve önceliklendirme yalnız yönetici/admin'e
+  aittir. Vatandaş talebini yalnız `pending` veya `assigned` durumundayken iptal
+  edebilir. Gerekçe: önceliklendirme kurumsal bir karardır (vatandaş
+  şişiremez); iş başladıktan (in_progress) sonra iptal, harcanan saha emeğini
+  boşa çıkaracağından kapatılır.

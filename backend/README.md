@@ -37,6 +37,7 @@ Production kurulumunda yalnız roller seed edilir ve ilk admin komutla açılır
 
 ```bash
 php artisan db:seed --class=RoleSeeder
+php artisan db:seed --class=CategorySeeder
 php artisan kenttalep:admin
 ```
 

@@ -25,10 +25,21 @@ class UserController extends Controller
     {
         $perPage = max(1, min($request->integer('per_page', 15), 100));
 
+        // Admin herhangi bir rolü filtreleyebilir; yönetici (admin olmayan)
+        // yalnız personel listesini görür (atama ekranı için).
+        $restrictToStaff = ! $this->authUser($request)->hasRole(Role::Admin->value);
+
         $users = User::query()
             ->with('roles')
             ->when(
-                $request->filled('role'),
+                $restrictToStaff,
+                fn (Builder $query) => $query->whereHas(
+                    'roles',
+                    fn (Builder $roles) => $roles->where('name', Role::Staff->value),
+                ),
+            )
+            ->when(
+                ! $restrictToStaff && $request->filled('role'),
                 fn (Builder $query) => $query->whereHas(
                     'roles',
                     fn (Builder $roles) => $roles->where('name', $request->string('role')->value()),

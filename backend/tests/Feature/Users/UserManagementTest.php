@@ -11,15 +11,16 @@ use function Pest\Laravel\getJson;
 use function Pest\Laravel\patchJson;
 use function Pest\Laravel\postJson;
 
-it('forbids non-admin roles from listing users', function (Role $role): void {
+it('forbids citizen and staff from listing users', function (Role $role): void {
     $user = userWithRole($role);
 
     getJson('/api/users', bearer(tokenFor($user)))->assertForbidden();
 })->with([
     'citizen' => [Role::Citizen],
     'staff' => [Role::Staff],
-    'manager' => [Role::Manager],
 ]);
+// Not: yönetici (manager) Faz 2'den itibaren personel listesini görebilir
+// (bkz. ManagerStaffListTest); bu yüzden dataset'ten çıkarıldı.
 
 it('allows an admin to list users', function (): void {
     $admin = userWithRole(Role::Admin);

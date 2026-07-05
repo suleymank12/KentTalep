@@ -49,6 +49,14 @@ return [
             'report' => false,
         ],
 
+        // Testler için izole (ama gerçek) private disk — Storage::fake yerine.
+        'media_test' => [
+            'driver' => 'local',
+            'root' => storage_path('app/testing/media'),
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
