@@ -11,13 +11,15 @@ last_seen güncelleme) middleware'lerinden geçer.
 | Method | Path | Auth | Rol | Açıklama |
 |--------|------|------|-----|----------|
 | POST | /api/auth/register | Hayır | — | Vatandaş kaydı; citizen rolü, token + cihaz kaydı oluşturur (201) |
-| POST | /api/auth/login | Hayır | — | Giriş; yeni token + cihaz döner. Hatalı bilgi 422, pasif hesap 403 |
+| POST | /api/auth/login | Hayır | — | Giriş; yeni token + cihaz döner. Hatalı bilgi generic 422 (`auth` anahtarı, alan ima etmez), pasif hesap 403 |
 | POST | /api/auth/logout | Evet | Tümü | Mevcut token'ı ve bağlı cihazı siler (204) |
 | GET | /api/auth/me | Evet | Tümü | Oturumdaki kullanıcı (UserResource) |
 | PATCH | /api/auth/device | Evet | Tümü | Push token'ı mevcut cihaza yazar (cihaz el değiştirme kuralıyla) |
 | PATCH | /api/auth/password | Evet | Tümü | Şifre değiştirir; diğer tüm token'ları iptal eder (204) |
 | POST | /api/auth/forgot-password | Hayır | — | Her durumda generic 200; kayıtlı+aktif ise 6 haneli e-posta kodu |
 | POST | /api/auth/reset-password | Hayır | — | Kodu doğrular, şifreyi sıfırlar, tüm token/cihazları siler |
+| GET | /api/settings | Hayır | — | Genel white-label ayarları (whitelist), 5 dk cache |
+| PATCH | /api/auth/profile | Evet | Tümü | Kullanıcı kendi ad/telefonunu günceller (UserResource) |
 
 Hız sınırları: login 5/dk (IP+e-posta), register 5/dk (IP),
 forgot-password 3/dk (IP+e-posta), reset-password 5/dk (IP). Aşımda 429.

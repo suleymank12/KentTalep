@@ -24,7 +24,7 @@ it('logs in with valid credentials and creates a device', function (): void {
     expect(UserDevice::where('user_id', $user->getKey())->count())->toBe(1);
 });
 
-it('rejects a wrong password with a generic 422', function (): void {
+it('rejects a wrong password with a generic 422 on the auth key', function (): void {
     $user = userWithRole(Role::Citizen);
 
     postJson('/api/auth/login', [
@@ -32,7 +32,9 @@ it('rejects a wrong password with a generic 422', function (): void {
         'password' => 'yanlissifre',
         'device_name' => 'Cihaz',
         'platform' => 'android',
-    ])->assertStatus(422);
+    ])->assertStatus(422)
+        ->assertJsonValidationErrors(['auth' => 'E-posta veya şifre hatalı.'])
+        ->assertJsonMissingValidationErrors(['email', 'password']);
 });
 
 it('forbids inactive users with 403', function (): void {

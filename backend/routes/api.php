@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketMediaController;
 use App\Http\Controllers\TicketTransitionController;
@@ -11,6 +12,9 @@ use App\Http\Controllers\UserController;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
+// Genel white-label ayarları (auth gerektirmez; ForceJson uygulanır).
+Route::get('settings', [SettingController::class, 'index']);
 
 Route::prefix('auth')->group(function (): void {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:register');
@@ -21,6 +25,7 @@ Route::prefix('auth')->group(function (): void {
     Route::middleware(['auth:sanctum', 'active', 'device.seen'])->group(function (): void {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
+        Route::patch('profile', [AuthController::class, 'updateProfile']);
         Route::patch('device', [AuthController::class, 'updateDevice']);
         Route::patch('password', [AuthController::class, 'changePassword']);
     });

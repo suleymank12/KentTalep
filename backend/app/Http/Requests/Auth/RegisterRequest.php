@@ -28,6 +28,7 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
             'device_name' => ['required', 'string', 'max:255'],
             'platform' => ['required', Rule::enum(DevicePlatform::class)],
+            'kvkk_accepted' => ['required', 'accepted'],
         ];
     }
 }

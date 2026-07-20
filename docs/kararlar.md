@@ -89,3 +89,26 @@ Her madde: karar + kısa gerekçe.
   edebilir. Gerekçe: önceliklendirme kurumsal bir karardır (vatandaş
   şişiremez); iş başladıktan (in_progress) sonra iptal, harcanan saha emeğini
   boşa çıkaracağından kapatılır.
+- **ADR-20 — Mobil stack (Expo SDK 57):** Vatandaş uygulaması Expo SDK 57
+  (React Native 0.86) + Expo Router (dosya tabanlı) + NativeWind v4 +
+  tailwindcss ^3.4 (v4 NativeWind ile uyumsuz) + TanStack Query (sunucu durumu)
+  + Zustand (istemci durumu) + React Hook Form/Zod (form+doğrulama) +
+  expo-secure-store (token). Gerekçe: yönetilen Expo iş akışı hızlı kurulum ve
+  OTA imkânı; token/query/form için olgun, tip-güvenli, hafif kütüphaneler;
+  token yalnız güvenli depoda tutulur.
+- **ADR-21 — Mobil harita MapLibre RN:** Harita katmanı (Faz 3B) MapLibre React
+  Native ile kurulur; tile URL settings'ten gelir. Gerekçe: Google Maps SDK
+  anahtarı/kullanım faturası yok, web (MapLibre GL) ile ortak stack, tile
+  kaynağının kurulumdan değiştirilebilmesi white-label modeline uygun.
+- **ADR-22 — Settings ile runtime white-label tema:** Marka adı, ana renk ve
+  harita varsayılanları `GET /api/settings` (auth'suz, whitelist'li, 5 dk
+  cache) üzerinden gelir; mobilde primary rengi NativeWind CSS değişkeniyle
+  (`--color-primary`) çalışma zamanında uygulanır. Gerekçe: tek kod tabanının
+  belediyeye göre yeniden markalanması; yalnız whitelist anahtarların
+  sızdırılması (iç ayarlar gizli kalır).
+- **ADR-23 — Lucide ikon seti + AI-görsel yasağı + wordmark:** İkonlar Lucide
+  (web: lucide-react, mobil: lucide-react-native); yapay zekâ ile üretilmiş
+  ikon/amblem/illüstrasyon kullanılmaz. Varsayılan marka tipografik
+  wordmark'tır; gerçek belediye arması kurulumda settings'ten yüklenir.
+  Gerekçe: tutarlı, lisanslı, kod tabanlı görseller; sahte kurumsal amblem
+  üretmekten kaçınma ve denetlenebilirlik.

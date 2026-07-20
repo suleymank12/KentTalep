@@ -32,6 +32,7 @@ final class RegisterUser
             'phone' => $phone,
             'password' => $password,
             'is_active' => true,
+            'kvkk_accepted_at' => now(),
         ]);
 
         $user->assignRole(Role::Citizen->value);

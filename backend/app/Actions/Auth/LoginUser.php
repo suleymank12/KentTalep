@@ -29,8 +29,10 @@ final class LoginUser
         $user = User::where('email', $email)->first();
 
         if ($user === null || ! Hash::check($password, (string) $user->password)) {
+            // Generic mesaj + alan-dışı 'auth' anahtarı: hangi alanın yanlış
+            // olduğu sızdırılmaz ve mesaj e-posta alanına iliştirilmez.
             throw ValidationException::withMessages([
-                'email' => 'Girdiğiniz bilgiler hatalı.',
+                'auth' => 'E-posta veya şifre hatalı.',
             ]);
         }
 

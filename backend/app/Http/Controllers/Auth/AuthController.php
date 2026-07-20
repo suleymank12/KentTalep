@@ -10,6 +10,7 @@ use App\Actions\Auth\RegisterUser;
 use App\Actions\Auth\RequestPasswordReset;
 use App\Actions\Auth\ResetPassword;
 use App\Actions\Auth\SyncDevicePushToken;
+use App\Actions\Auth\UpdateProfile;
 use App\Enums\DevicePlatform;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ChangePasswordRequest;
@@ -18,6 +19,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\UpdateDeviceRequest;
+use App\Http\Requests\Auth\UpdateProfileRequest;
 use App\Http\Resources\UserDeviceResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
@@ -69,6 +71,13 @@ class AuthController extends Controller
     public function me(Request $request): UserResource
     {
         return new UserResource($this->authUser($request)->load('roles'));
+    }
+
+    public function updateProfile(UpdateProfileRequest $request, UpdateProfile $action): UserResource
+    {
+        $user = $action->handle($this->authUser($request), $request->validated());
+
+        return new UserResource($user->load('roles'));
     }
 
     public function updateDevice(UpdateDeviceRequest $request, SyncDevicePushToken $action): UserDeviceResource

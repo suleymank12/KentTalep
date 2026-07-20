@@ -33,3 +33,17 @@ ekranları, onaylı tasarım brief'i olmadan kodlanmaz.
   (varsayılan: Inter).
 - Lorem ipsum yasak; tüm demo içerik gerçekçi Türkçedir (kategori, adres,
   isim örnekleri dahil).
+
+## Responsive
+- Mobil: flex tabanlı yerleşim, sabit kapsayıcı genişliği yok; 360dp
+  telefondan tablete kırılmadan çalışır; tablette içerik en fazla 480dp
+  sütunda ortalanır; safe-area zorunludur.
+- Web (admin): masaüstü önceliklidir ancak 768px tablete kadar
+  responsive'dir; tablolar dar ekranda yatay kaydırma ile kullanılabilir
+  kalır.
+
+## İkon ve amblem
+- İkon seti Lucide'dir (web: lucide-react, mobil: lucide-react-native).
+  Yapay zekâ ile üretilmiş ikon/amblem/illüstrasyon kullanılamaz.
+- Varsayılan marka tipografik wordmark'tır; sahte belediye arması
+  çizilmez. Gerçek belediye amblemi kurulum ayarlarından yüklenir.

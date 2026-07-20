@@ -18,4 +18,23 @@ return [
 
     'media_disk' => env('MEDIA_DISK', 'local'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Genel (public) ayar whitelist'i
+    |--------------------------------------------------------------------------
+    |
+    | GET /api/settings yalnız bu anahtarları döner (auth gerektirmez).
+    | Whitelist dışı hiçbir Setting kaydı sızmaz.
+    |
+    */
+
+    'public_settings' => [
+        'municipality_name',
+        'primary_color',
+        'map_center_lat',
+        'map_center_lng',
+        'map_zoom',
+        'map_tile_url',
+    ],
+
 ];
