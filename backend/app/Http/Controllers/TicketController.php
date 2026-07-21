@@ -38,7 +38,13 @@ class TicketController extends Controller
         }
 
         $query
-            ->when($request->filled('status'), fn (Builder $q) => $q->where('status', $request->string('status')->value()))
+            ->when($request->filled('status'), function (Builder $q) use ($request): void {
+                $statuses = array_values(array_filter(
+                    array_map('trim', explode(',', $request->string('status')->value())),
+                    fn (string $s): bool => $s !== '',
+                ));
+                $q->whereIn('status', $statuses);
+            })
             ->when($request->filled('category_id'), fn (Builder $q) => $q->where('category_id', $request->integer('category_id')))
             ->when($request->filled('priority'), fn (Builder $q) => $q->where('priority', $request->string('priority')->value()))
             ->when($request->filled('q'), function (Builder $q) use ($request): void {
@@ -102,7 +108,15 @@ class TicketController extends Controller
 
     public function logs(Ticket $ticket): AnonymousResourceCollection
     {
-        $logs = $ticket->statusLogs()->with('changedBy')->latest()->get();
+        // En yeni üstte, deterministik: eşit created_at'te (seed'de tüm loglar
+        // aynı anda yazılır) id monoton arttığı için id DESC = ekleme sırasının
+        // tersi = en yeni üstte. İkincil sıra olmadan eşit zaman damgasında
+        // düzen veritabanına kalırdı.
+        $logs = $ticket->statusLogs()
+            ->with('changedBy')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->get();
 
         return TicketStatusLogResource::collection($logs);
     }

@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -13,4 +14,19 @@ const METRICS = {
  */
 export function renderScreen(ui: ReactElement) {
   return render(<SafeAreaProvider initialMetrics={METRICS}>{ui}</SafeAreaProvider>);
+}
+
+/**
+ * TanStack Query + safe-area sağlayıcılarıyla render eder. Testlerde retry
+ * kapalıdır ki hata durumları anında (retry beklemeden) çözülsün.
+ */
+export function renderWithProviders(ui: ReactElement, client?: QueryClient) {
+  const queryClient =
+    client ?? new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider initialMetrics={METRICS}>{ui}</SafeAreaProvider>
+    </QueryClientProvider>,
+  );
 }

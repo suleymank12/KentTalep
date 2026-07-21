@@ -44,6 +44,47 @@ it('filters tickets by proximity with the near parameter', function (): void {
         ->assertJsonCount(1, 'data');
 });
 
+it('filters tickets by a comma-separated status list', function (): void {
+    $manager = userWithRole(Role::Manager);
+    $category = Category::factory()->create();
+
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'pending']);
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'assigned']);
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'in_progress']);
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'resolved']);
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'closed']);
+
+    getJson('/api/tickets?status=pending,assigned,in_progress', bearer(tokenFor($manager)))
+        ->assertOk()
+        ->assertJsonCount(3, 'data')
+        ->assertJsonFragment(['status' => 'pending'])
+        ->assertJsonFragment(['status' => 'assigned'])
+        ->assertJsonFragment(['status' => 'in_progress'])
+        ->assertJsonMissing(['status' => 'resolved'])
+        ->assertJsonMissing(['status' => 'closed']);
+});
+
+it('still accepts a single status value', function (): void {
+    $manager = userWithRole(Role::Manager);
+    $category = Category::factory()->create();
+
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'pending']);
+    Ticket::factory()->create(['category_id' => $category->id, 'status' => 'resolved']);
+
+    getJson('/api/tickets?status=resolved', bearer(tokenFor($manager)))
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.status', 'resolved');
+});
+
+it('rejects an invalid status value in the list with 422', function (): void {
+    $manager = userWithRole(Role::Manager);
+
+    getJson('/api/tickets?status=pending,banana', bearer(tokenFor($manager)))
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('status');
+});
+
 it('finds a ticket by its number via the q filter', function (): void {
     $manager = userWithRole(Role::Manager);
     $category = Category::factory()->create();

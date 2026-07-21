@@ -59,7 +59,7 @@ Tüm uç noktalar `auth:sanctum` + `active` + `device.seen` gerektirir.
 | Method | Path | Rol | Açıklama |
 |--------|------|-----|----------|
 | POST | /api/tickets | Vatandaş/Admin | Talep oluşturur (pending). priority İSTENMEZ (triage). throttle: 5/10dk (kullanıcı) |
-| GET | /api/tickets | Tümü | Rol kapsamlı liste. Filtreler: `status`, `category_id`, `priority`, `q`, `near=lat,lng`+`radius_km`, `per_page` |
+| GET | /api/tickets | Tümü | Rol kapsamlı liste. Filtreler: `status` (tek değer ya da virgüllü liste, ör. `status=pending,assigned,in_progress`; her değer enum'da doğrulanır, geçersizse 422), `category_id`, `priority`, `q`, `near=lat,lng`+`radius_km`, `per_page` |
 | GET | /api/tickets/{ticket} | Sahibi/Atanan/Yön./Admin | Detay (kategori, medya, atanan, sahip) |
 | PATCH | /api/tickets/{ticket} | Sahibi (pending, title/desc) · Yön./Admin (category/priority, terminal değil) | Günceller |
 | DELETE | /api/tickets/{ticket} | Admin | Soft delete |

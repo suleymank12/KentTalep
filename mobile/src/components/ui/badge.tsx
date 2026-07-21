@@ -1,13 +1,8 @@
 import { Text, View } from 'react-native';
 
-export type TicketStatus =
-  | 'pending'
-  | 'assigned'
-  | 'in_progress'
-  | 'resolved'
-  | 'closed'
-  | 'cancelled'
-  | 'rejected';
+import type { TicketStatus } from '@/lib/types';
+
+export type { TicketStatus };
 
 // Sınıf adları statik literaldir ki Tailwind içerik taraması token'ları üretsin.
 const STATUS: Record<TicketStatus, { label: string; container: string; text: string }> = {

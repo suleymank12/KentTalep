@@ -3,6 +3,17 @@ import * as SecureStore from 'expo-secure-store';
 
 export const TOKEN_KEY = 'kenttalep_token';
 
+// API kökü (baseURL'den "/api" soneki çıkarılır); medya yolları "/api/..."
+// ile başladığı için mutlak adres kök + yol ile kurulur.
+const API_ORIGIN = (process.env.EXPO_PUBLIC_API_URL ?? '').replace(/\/api\/?$/, '');
+
+/**
+ * TicketMedia'nın göreli url/thumb_url yolunu mutlak adrese çevirir.
+ */
+export function absoluteMediaUrl(path: string): string {
+  return `${API_ORIGIN}${path}`;
+}
+
 export const api = create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   headers: { Accept: 'application/json' },

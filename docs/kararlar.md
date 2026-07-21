@@ -112,3 +112,18 @@ Her madde: karar + kısa gerekçe.
   wordmark'tır; gerçek belediye arması kurulumda settings'ten yüklenir.
   Gerekçe: tutarlı, lisanslı, kod tabanlı görseller; sahte kurumsal amblem
   üretmekten kaçınma ve denetlenebilirlik.
+- **Not — Expo şablon LICENSE'ı silindi:** Expo starter'ının getirdiği MIT
+  `mobile/LICENSE` dosyası kaldırıldı; ürünün lisansı değildir ve yanlışlıkla
+  MIT beyanı olarak okunabilirdi.
+- **ADR-24 — Uygulama ikonu kodla üretilir (sharp):** İkon/splash/favicon
+  PNG'leri `mobile/scripts/generate-icons.mjs` içinde `sharp` ile deterministik
+  üretilir (primary zemin + elle yazılmış SVG "K" path'i); üretilen PNG'ler
+  commit'e girer. Gerekçe: ADR-23'ün AI-görsel yasağına uyum, üretimin
+  tekrarlanabilir ve denetlenebilir olması, ikon değişikliğinin diff'te
+  görünmesi. Sharp yalnız devDependency; runtime'a girmez.
+- **ADR-25 — Geliştirme dev client'a geçti:** Expo Go yerine `expo-dev-client`
+  ile üretilen özel geliştirme derlemesi kullanılır. Gerekçe: MapLibre native
+  modülü (`@maplibre/maplibre-react-native`) Expo Go'da bulunmaz; Faz 5 push
+  bildirimleri de dev build gerektirecektir. Geçiş tek seferliktir ve şimdi
+  yapılır: ilk kurulum `npx expo run:android` (10-20 dk), sonrası `npm start`
+  ile dev client'a bağlanılır. Expo Go'ya dönüş desteklenmez.

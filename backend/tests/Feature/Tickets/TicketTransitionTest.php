@@ -7,7 +7,9 @@ use App\Models\Category;
 use App\Models\Ticket;
 use App\Models\TicketStatusLog;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
+use function Pest\Laravel\getJson;
 use function Pest\Laravel\patchJson;
 
 /**
@@ -123,6 +125,31 @@ it('rejects an invalid transition with 422', function (): void {
 
     // pending -> resolved tanımlı değil
     patchJson("/api/tickets/{$ticket->id}/resolve", [], bearer(tokenFor($staff)))->assertStatus(422);
+});
+
+it('returns status logs newest-first and deterministically when timestamps tie', function (): void {
+    $manager = userWithRole(Role::Manager);
+    $ticket = makeTicket(['status' => 'pending']);
+
+    // Üç logu AYNI created_at ile yaz (seed'deki eşzamanlı yazımı taklit eder).
+    Carbon::setTestNow('2026-07-20 09:00:00');
+    $logs = collect(['assigned', 'in_progress', 'resolved'])
+        ->map(fn (string $status): TicketStatusLog => TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'changed_by' => $manager->id,
+            'old_status' => 'pending',
+            'new_status' => $status,
+        ]));
+    Carbon::setTestNow();
+
+    // Yanıt id DESC olmalı: en son eklenen (en büyük id) en üstte, her koşuda aynı.
+    $expectedIds = $logs->pluck('id')->sortDesc()->values()->all();
+
+    getJson("/api/tickets/{$ticket->id}/logs", bearer(tokenFor($manager)))
+        ->assertOk()
+        ->assertJsonPath('data.0.id', $expectedIds[0])
+        ->assertJsonPath('data.1.id', $expectedIds[1])
+        ->assertJsonPath('data.2.id', $expectedIds[2]);
 });
 
 it('records the new assignee on reassignment', function (): void {
